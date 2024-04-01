@@ -12,7 +12,7 @@ func main() {
 	// Pasta 
 	pasta := "C:\\Users\\tiesc\\PROJETOS\\folder_observer_go\\caminho_teste"
 
-	// Arquivo de log
+	// Arquivo log
 	arquivoLog := "log.txt"
 
 	// Inicializa o observer
@@ -38,7 +38,7 @@ func main() {
 	// Cria um logger para o log
 	logger := log.New(logFile, "", log.LstdFlags)
 
-	// mudanças
+	// observa mudanças
 	registrarMudanca := func(event fsnotify.Event) {
 		info, err := os.Stat(event.Name)
 		if err != nil {
@@ -51,12 +51,15 @@ func main() {
 		if event.Op&fsnotify.Create == fsnotify.Create {
 			operacao = "Criado"
 		}
+		// corrigir, retornando erro ***********
 		if event.Op&fsnotify.Remove == fsnotify.Remove {
 			operacao = "Removido"
 		}
+		// corrigir, retornando erro ***********
 		if event.Op&fsnotify.Rename == fsnotify.Rename {
 			operacao = "Renomeado"
 		}
+		// corrigir, retornando erro ***********
 		if event.Op&fsnotify.Write == fsnotify.Write {
 			operacao = "Modificado"
 		}
