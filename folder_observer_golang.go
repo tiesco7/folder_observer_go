@@ -39,34 +39,43 @@ func main() {
 	logger := log.New(logFile, "", log.LstdFlags)
 
 	// observa mudanças
+
+	// função alterada para registrar mudanças de exclusão e alterações de nome do arquivo
 	registrarMudanca := func(event fsnotify.Event) {
-		info, err := os.Stat(event.Name)
-		if err != nil {
-			logger.Printf("Erro ao obter informações sobre o arquivo %s: %s", event.Name, err)
-			return
-		}
+		// Verifica se o arquivo ainda existe
+		_, err := os.Stat(event.Name)
+		existe := err == nil
 
 		// operação realizada
 		operacao := ""
-		if event.Op&fsnotify.Create == fsnotify.Create {
+		switch {
+		case event.Op&fsnotify.Create == fsnotify.Create:
 			operacao = "Criado"
-		}
-		// corrigir, retornando erro ***********
-		if event.Op&fsnotify.Remove == fsnotify.Remove {
-			operacao = "Removido"
-		}
-		// corrigir, retornando erro ***********
-		if event.Op&fsnotify.Rename == fsnotify.Rename {
-			operacao = "Renomeado"
-		}
-		// corrigir, retornando erro ***********
-		if event.Op&fsnotify.Write == fsnotify.Write {
+		case event.Op&fsnotify.Remove == fsnotify.Remove:
+			if !existe {
+				operacao = "Removido"
+			}
+		case event.Op&fsnotify.Rename == fsnotify.Rename:
+			if !existe {
+				operacao = "Renomeado"
+			}
+		case event.Op&fsnotify.Write == fsnotify.Write:
 			operacao = "Modificado"
 		}
 
-		// log
-		logger.Printf("%s - Arquivo: %s - Data/Hora: %s - Operação: %s", event.Name, info.ModTime().Format(time.RFC3339), time.Now().Format(time.RFC3339), operacao)
+		// llog
+		if existe {
+			info, err := os.Stat(event.Name)
+			if err != nil {
+				logger.Printf("Erro ao obter informações sobre o arquivo %s: %s", event.Name, err)
+				return
+			}
+			logger.Printf("%s - Arquivo: %s - Data/Hora: %s - Operação: %s", event.Name, info.ModTime().Format(time.RFC3339), time.Now().Format(time.RFC3339), operacao)
+		} else {
+			logger.Printf("%s - Data/Hora: %s - Operação: %s", event.Name, time.Now().Format(time.RFC3339), operacao)
+		}
 	}
+
 
 	// Loop observer
 	for {
