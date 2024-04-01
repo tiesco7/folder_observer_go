@@ -1,0 +1,2 @@
+2024/04/01 18:30:13 C:\Users\tiesc\PROJETOS\folder_observer_go\caminho_teste\Novo Documento de Texto.txt - Arquivo: 2024-04-01T18:30:13-03:00 - Data/Hora: 2024-04-01T18:30:13-03:00 - Operação: Criado
+
